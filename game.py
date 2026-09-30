@@ -87,6 +87,8 @@ class Enemy:
 
 
 def spawn_wave(wave):
+    global CURRENT_WAVE
+    CURRENT_WAVE = wave 
     enemies, index = [], 0
     layout = [("boss", 4, 90), ("red", 8, 130), ("red", 8, 170), ("blue", 8, 210)]
     for kind, count, y in layout:
