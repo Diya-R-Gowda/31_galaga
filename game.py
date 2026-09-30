@@ -32,9 +32,16 @@ def enemy_tint(kind):
     return palette.get(kind)
 
 
+BANNER_TIME = 1.5
+banner_timer = 0.0
+banner_wave = 1
+
+
 def on_wave_start(wave):
     """Called at the start of every wave; add banners, speed-ups, or palette swaps here."""
-    pass
+    global banner_timer, banner_wave
+    banner_wave = wave
+    banner_timer = BANNER_TIME
 
 
 def shield_charges(wave):
@@ -103,6 +110,7 @@ def spawn_wave(wave):
 class Game:
     def __init__(self):
         self.stars = [[random.randint(0, WIDTH), random.randint(0, HEIGHT), random.uniform(30, 120)] for _ in range(70)]
+        self.banner_font = pygame.font.Font(None, 72)
         self.reset()
 
     def reset(self):
@@ -145,9 +153,11 @@ class Game:
             self.ships = 2
 
     def update(self, dt, keys):
+        global banner_timer
         if self.state != "play":
             return
         self.time += dt
+        banner_timer = max(0.0, banner_timer - dt)
         self.cooldown -= dt
         self.invulnerable = max(0.0, self.invulnerable - dt)
         span = SHIP_GAP * (self.ships - 1)
@@ -224,6 +234,9 @@ class Game:
         if self.state == "lose":
             label = font.render("GAME OVER - Press R", True, (255, 255, 120))
             screen.blit(label, label.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
+        if banner_timer > 0 and self.state == "play":
+            text = self.banner_font.render(f"WAVE {banner_wave}", True, (255, 255, 120))
+            screen.blit(text, text.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
 
 
 def main():
