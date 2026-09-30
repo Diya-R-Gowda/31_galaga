@@ -14,9 +14,22 @@ def bezier(p0, p1, p2, p3, t):
     return pygame.Vector2(x, y)
 
 
+CURRENT_WAVE = 1
+
+# Each palette maps every kind to a distinct colour. Palette changes every 2 waves from wave 3.
+WAVE_PALETTES = [
+    {"boss": (255, 200, 60), "red": (240, 120, 40), "blue": (60, 200, 200)},    # waves 3-4
+    {"boss": (255, 90, 200), "red": (170, 60, 240), "blue": (90, 230, 130)},    # waves 5-6
+    {"boss": (240, 240, 100), "red": (60, 220, 170), "blue": (250, 110, 110)},  # waves 7-8
+]
+
+
 def enemy_tint(kind):
     """Return an (r, g, b) colour override for an enemy kind, or None for the default."""
-    pass
+    if CURRENT_WAVE < 3:
+        return None
+    palette = WAVE_PALETTES[((CURRENT_WAVE - 3) // 2) % len(WAVE_PALETTES)]
+    return palette.get(kind)
 
 
 def on_wave_start(wave):
